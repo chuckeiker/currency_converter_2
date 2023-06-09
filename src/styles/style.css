@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+}
+
+.currency-table {
+  margin-bottom: 20px;
+}
+
+.currency-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.currency-table th,
+.currency-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.currency-table th {
+  width: calc(100% / 3);
+}
+
+.currency-converter {
+  margin-bottom: 20px;
+}
+
+.converter-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.converter-form .input-group {
+  display: flex;
+  align-items: center;
+}
+
+.converter-form .input-group input[type="number"],
+.converter-form .input-group input[type="text"],
+.converter-form .input-group select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.converter-form .input-group select {
+  margin-left: 10px;
+}
+
+.swap-btn {
+  padding: 8px 16px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-content a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* CurrencyTable.css */
+.currency-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.currency-table th,
+.currency-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  width: 16.66%; /* Set width to 16.66% for evenly distributed columns */
+}
+
+.currency-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.currency-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.currency-table tbody tr:hover {
+  background-color: #e9e9e9;
+}
+
+.currency-table td:first-child,
+.currency-table td:nth-child(3),
+.currency-table td:nth-child(5) {
+  font-weight: bold;
+}
