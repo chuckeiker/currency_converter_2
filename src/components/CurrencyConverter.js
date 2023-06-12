@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';
 
 function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
   const [fromCurrency, setFromCurrency] = useState(baseCurrency);
-  const [toCurrency, setToCurrency] = useState('');
+  const [toCurrency, setToCurrency] = useState(baseCurrency);
   const [amount, setAmount] = useState(0);
   const [result, setResult] = useState(0);
   const chartRef = useRef(null);
@@ -11,30 +11,36 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
 
   const handleFromCurrencyChange = (currency) => {
     setFromCurrency(currency);
-    convertAmount(currency, toCurrency, amount);
+    setToCurrency(currency);
   };
 
   const handleToCurrencyChange = (currency) => {
     setToCurrency(currency);
-    convertAmount(fromCurrency, currency, amount);
   };
 
   const handleAmountChange = (value) => {
     setAmount(value);
-    convertAmount(fromCurrency, toCurrency, value);
   };
 
-  const convertAmount = (from, to, value) => {
-    if (from && to && value) {
-      if (from === 'USD' && to === 'USD') {
-        setResult(value);
+  const handleAmountBlur = () => {
+    convertAmount();
+  };
+
+  useEffect(() => {
+    convertAmount();
+  }, [fromCurrency, toCurrency]);
+
+  const convertAmount = () => {
+    if (fromCurrency && toCurrency && amount) {
+      if (fromCurrency === 'USD' && toCurrency === 'USD') {
+        setResult(amount);
       } else {
-        const fromRate = from === 'USD' ? 1 : exchangeRates[from];
-        const toRate = to === 'USD' ? 1 : exchangeRates[to];
+        const fromRate = fromCurrency === 'USD' ? 1 : exchangeRates[fromCurrency];
+        const toRate = toCurrency === 'USD' ? 1 : exchangeRates[toCurrency];
 
         if (fromRate && toRate) {
           const rate = toRate / fromRate;
-          setResult((value * rate).toFixed(2));
+          setResult((amount * rate).toFixed(2));
         } else {
           setResult(0);
         }
@@ -86,6 +92,7 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
           scales: {
             x: {
               display: true,
+              max: 'auto',
             },
             y: {
               display: true,
@@ -99,7 +106,7 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
     const fetchHistoricalData = async () => {
       const endDate = new Date().toISOString().split('T')[0];
       const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 365);
+      startDate.setDate(startDate.getDate() - 90);
       const startDateString = startDate.toISOString().split('T')[0];
       const apiUrl = `https://api.frankfurter.app/${startDateString}..${endDate}?from=${fromCurrency}&to=${toCurrency}`;
 
@@ -129,6 +136,7 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
           type="number"
           value={amount}
           onChange={(e) => handleAmountChange(e.target.value)}
+          onBlur={handleAmountBlur}
         />
         <select
           value={fromCurrency}

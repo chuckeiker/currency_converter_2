@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     fetchExchangeRates();
     fetchCurrencies();
-  }, []);
+  }, [baseCurrency]);
 
   const fetchExchangeRates = async () => {
     try {
