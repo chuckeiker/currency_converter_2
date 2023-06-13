@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
-  const [fromCurrency, setFromCurrency] = useState(baseCurrency);
-  const [toCurrency, setToCurrency] = useState(baseCurrency);
+function CurrencyConverter({ exchangeRates, currencies }) {
+  const [fromCurrency, setFromCurrency] = useState('USD');
+  const [toCurrency, setToCurrency] = useState('USD');
   const [amount, setAmount] = useState(0);
   const [result, setResult] = useState(0);
   const chartRef = useRef(null);
@@ -28,15 +28,15 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
 
   useEffect(() => {
     convertAmount();
-  }, [fromCurrency, toCurrency]);
+  }, [fromCurrency, toCurrency, amount]);
 
   const convertAmount = () => {
     if (fromCurrency && toCurrency && amount) {
-      if (fromCurrency === 'USD' && toCurrency === 'USD') {
+      if (fromCurrency === toCurrency) {
         setResult(amount);
       } else {
-        const fromRate = fromCurrency === 'USD' ? 1 : exchangeRates[fromCurrency];
-        const toRate = toCurrency === 'USD' ? 1 : exchangeRates[toCurrency];
+        const fromRate = exchangeRates[fromCurrency] || 1;
+        const toRate = exchangeRates[toCurrency] || 1;
 
         if (fromRate && toRate) {
           const rate = toRate / fromRate;
@@ -53,7 +53,7 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
   const handleSwapCurrencies = () => {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
-    convertAmount(toCurrency, fromCurrency, amount);
+    convertAmount();
   };
 
   useEffect(() => {
@@ -110,20 +110,19 @@ function CurrencyConverter({ baseCurrency, exchangeRates, currencies }) {
       const startDateString = startDate.toISOString().split('T')[0];
       const apiUrl = `https://api.frankfurter.app/${startDateString}..${endDate}?from=${fromCurrency}&to=${toCurrency}`;
 
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      const rates = data?.rates || {};
-      return Object.keys(rates).reduce((chartData, date) => {
-        chartData[date] = rates[date][toCurrency];
-        return chartData;
-      }, {});
-    } catch (error) {
-      console.error('Error fetching historical data:', error);
-      return null;
-    }
-  };
-
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        const rates = data?.rates || {};
+        return Object.keys(rates).reduce((chartData, date) => {
+          chartData[date] = rates[date][toCurrency];
+          return chartData;
+        }, {});
+      } catch (error) {
+        console.error('Error fetching historical data:', error);
+        return null;
+      }
+    };
 
     buildChart();
   }, [fromCurrency, toCurrency]);
